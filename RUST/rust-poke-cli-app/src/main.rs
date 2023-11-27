@@ -1,45 +1,30 @@
 use std::io::stdin;
-
-
-const API_BASE_URL: &str = "https://pokeapi.co/api/v2/pokemon";
-
-#[derive(serde::Deserialize, Debug)]
-struct Pokemon {
-    id: i32,
-    name: String,
-    r#types: Vec<PokemonType>
-
-}
-
-#[derive(serde::Deserialize, Debug)]
-struct PokemonType {
-    r#type: PokemonTypeStr
-}
-
-#[derive(serde::Deserialize, Debug)]
-struct PokemonTypeStr {
-    name: String,    
-}
+mod api;
+mod display;
 
 #[tokio::main]
 async fn main() {
-    println!("pokemon id:");
-    
-    let mut input = String::new();
-    stdin().read_line(&mut input).unwrap();
+    loop {
+        println!("Enter Pokemon ID (1-1292) or type 'exit' to quit:");
 
-    let pokemon_id: i32 = input.trim().parse().unwrap();
+        let mut input = String::new();
+        stdin().read_line(&mut input).unwrap();
+        let input = input.trim();
 
-     let response: Pokemon = reqwest::get(format!("{API_BASE_URL}/{pokemon_id}"))
-        .await.unwrap()
-        .json()
-        .await.unwrap();
-    println!("{:#?}", response);
+        if input.eq_ignore_ascii_case("exit") {
+            println!("Exiting the program.");
+            break;
+        }
 
-
-
-}   
-
-// response.types.iter().map(|poke_type| {
-//         let name = &poke_type.r#type.name;
-//         print!("{}", name);
+        if let Ok(pokemon_id) = input.parse::<i32>() {
+            if (1..=1292).contains(&pokemon_id) {
+                let response = api::get_pokemon(pokemon_id).await;
+                display::show_pokemon_info(&response);
+            } else {
+                println!("Please enter a valid Pokemon ID between 1 and 1292.");
+            }
+        } else {
+            println!("Invalid input. Please enter a valid Pokemon ID or 'exit'.");
+        }
+    }
+}
