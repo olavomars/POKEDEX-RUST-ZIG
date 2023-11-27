@@ -1,0 +1,1 @@
+/Users/olavomac/Desktop/code/courses/JJmentorship/POKEMON\ CLI\ APP/RUST/rust-poke-cli-app/target/debug/rust-poke-cli-app: /Users/olavomac/Desktop/code/courses/JJmentorship/POKEMON\ CLI\ APP/RUST/rust-poke-cli-app/src/main.rs
